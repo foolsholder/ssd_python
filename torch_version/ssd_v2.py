@@ -11,7 +11,7 @@ from torch.nn import (
     MaxPool2d
 )
 
-from ssd_layers import Normalize, PriorBox
+from .ssd_layers import Normalize, PriorBox
 
 class SSD300v2(torch.nn.Module):
     """SSD300 architecture.
