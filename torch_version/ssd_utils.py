@@ -1,5 +1,6 @@
 import numpy as np
 import torchvision
+import torch
 
 class BBoxUtility(object):
     """Utility class to do some stuff with bounding boxes and priors.
@@ -210,8 +211,8 @@ class BBoxUtility(object):
                 c_confs = mbox_conf[i, :, c]
                 c_confs_m = c_confs > confidence_threshold
                 if len(c_confs[c_confs_m]) > 0:
-                    boxes_to_process = decode_bbox[c_confs_m]
-                    confs_to_process = c_confs[c_confs_m]
+                    boxes_to_process = torch.tensor(decode_bbox[c_confs_m])
+                    confs_to_process = torch.tensor(c_confs[c_confs_m])
                     idx = torchvision.ops.nms(boxes_to_process, confs_to_process,
                                                     iou_threshold=self._nms_thresh)
                     idx = np.array(idx)[:self._top_k]
