@@ -215,7 +215,7 @@ class BBoxUtility(object):
                     confs_to_process = torch.tensor(c_confs[c_confs_m])
                     idx = torchvision.ops.nms(boxes_to_process, confs_to_process,
                                                     iou_threshold=self._nms_thresh)
-                    idx = np.array(idx)[:self._top_k]
+                    idx = np.array(idx)[:self.top_k]
 
                     good_boxes = boxes_to_process[idx]
                     confs = confs_to_process[idx][:, None]
