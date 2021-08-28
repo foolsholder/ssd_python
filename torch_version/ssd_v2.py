@@ -219,32 +219,40 @@ class SSD300v2(torch.nn.Module):
         # predictions from fc7
 
         fc7_mbox_loc = self.fc7_mbox_loc(fc7)
+        fc7_mbox_loc = fc7_mbox_loc.permute(0, 2, 3, 1)
         fc7_mbox_loc_flat = self.fc7_mbox_loc_flat(fc7_mbox_loc)
         fc7_mbox_conf = self.fc7_mbox_conf(fc7)
+        fc7_mbox_conf = fc7_mbox_conf.permute(0, 2, 3, 1)
         fc7_mbox_conf_flat = self.fc7_mbox_conf_flat(fc7_mbox_conf)
         fc7_mbox_priorbox = self.fc7_mbox_priorbox(fc7)
 
         # predictions from conv6_2
 
         conv6_2_mbox_loc = self.conv6_2_mbox_loc(conv6_2)
+        conv6_2_mbox_loc = conv6_2_mbox_loc.permute(0, 2, 3, 1)
         conv6_2_mbox_loc_flat = self.conv6_2_mbox_loc_flat(conv6_2_mbox_loc)
         conv6_2_mbox_conf = self.conv6_2_mbox_conf(conv6_2)
+        conv6_2_mbox_conf = conv6_2_mbox_conf.permute(0, 2, 3, 1)
         conv6_2_mbox_conf_flat = self.conv6_2_mbox_conf_flat(conv6_2_mbox_conf)
         conv6_2_mbox_priorbox = self.conv6_2_mbox_priorbox(conv6_2)
 
         # predictions from conv7_2
 
         conv7_2_mbox_loc = self.conv7_2_mbox_loc(conv7_2)
+        conv7_2_mbox_loc = conv7_2_mbox_loc.permute(0, 2, 3, 1)
         conv7_2_mbox_loc_flat = self.conv7_2_mbox_loc_flat(conv7_2_mbox_loc)
         conv7_2_mbox_conf = self.conv7_2_mbox_conf(conv7_2)
+        conv7_2_mbox_conf = conv7_2_mbox_conf.permute(0, 2, 3, 1)
         conv7_2_mbox_conf_flat = self.conv7_2_mbox_conf_flat(conv7_2_mbox_conf)
         conv7_2_mbox_priorbox = self.conv7_2_mbox_priorbox(conv7_2)
 
         # predictions from conv8_2
 
         conv8_2_mbox_loc = self.conv8_2_mbox_loc(conv8_2)
+        conv8_2_mbox_loc = conv8_2_mbox_loc.permute(0, 2, 3, 1)
         conv8_2_mbox_loc_flat = self.conv8_2_mbox_loc_flat(conv8_2_mbox_loc)
         conv8_2_mbox_conf = self.conv8_2_mbox_conf(conv8_2)
+        conv8_2_mbox_conf = conv8_2_mbox_conf.permute(0, 2, 3, 1)
         conv8_2_mbox_conf_flat = self.conv8_2_mbox_conf_flat(conv8_2_mbox_conf)
         conv8_2_mbox_priorbox = self.conv8_2_mbox_priorbox(conv8_2)
 
