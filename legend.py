@@ -1,5 +1,5 @@
-from tf_version import SSD300v2
-from torch_version import SSDv2
+from tf_version import SSD300v2 as tf_ssd
+from torch_version import SSD300v2 as torch_ssd
 
-a = SSD300v2((300, 300, 3))
-b = SSDv2((300, 300, 3))
+a = tf_ssd((300, 300, 3))
+b = torch_ssd((300, 300, 3))

@@ -11,6 +11,7 @@ from torch.nn import (
     MaxPool2d
 )
 
+from ssd_layers import Normalize, PriorBox
 
 class SSD300v2(torch.nn.Module):
     """SSD300 architecture.
@@ -24,7 +25,7 @@ class SSD300v2(torch.nn.Module):
     """
 
     def __init__(self, input_shape, num_classes=21):
-        super(SSDv2, self).__init__()
+        super(SSD300v2, self).__init__()
 
         # Block 1
         self.conv1_1 = Conv2d(3, 64, (3, 3), padding=(1, 1))
@@ -122,5 +123,5 @@ class SSD300v2(torch.nn.Module):
 
 if __name__ == '__main__':
     from torchsummary import summary
-    model = SSDv2((300, 300, 3))
+    model = SSD300v2((300, 300, 3))
     summary(model, (3, 300, 300))
