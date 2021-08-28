@@ -28,13 +28,13 @@ class SSDv2(torch.nn.Module):
         # Block 1
         self.conv1_1 = Conv2d(3, 64, (3, 3), padding=(1, 1))
         self.conv1_2 = Conv2d(64, 64, (3, 3), padding=(1, 1))
-        self.pool1 = MaxPool2d(kernel_size=(2, 2), stride=(2, 2), padding=(1, 1))
+        self.pool1 = MaxPool2d(kernel_size=(2, 2), stride=(2, 2))
 
         # Block 2
 
         self.conv2_1 = Conv2d(64, 128, (3, 3), padding=(1, 1))
         self.conv2_2 = Conv2d(128, 128, (3, 3), padding=(1, 1))
-        self.pool2 = MaxPool2d(kernel_size=(2, 2), stride=(2, 2), padding=(1, 1))
+        self.pool2 = MaxPool2d(kernel_size=(2, 2), stride=(2, 2))
 
         # Block 3
         self.conv3_1 = Conv2d(128, 256, (3, 3), padding=(1, 1))
@@ -108,3 +108,8 @@ class SSDv2(torch.nn.Module):
 
         pool6 = self.pool6(fc7).view(input_object.size(0), -1)
         return pool6
+
+if __name__ == '__main__':
+    from torchsummary import summary
+    model = SSDv2((300, 300, 3))
+    summary(model, (3, 300, 300))
