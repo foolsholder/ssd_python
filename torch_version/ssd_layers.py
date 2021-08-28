@@ -24,7 +24,7 @@ class Normalize(torch.nn.Module):
         self.scale = scale
         self.name = '{}_gamma'.format(name)
 
-        shape = (1, input_shape[1],) + tuple([1] * (len(input_shape) - 1))
+        shape = (1, input_shape[1],) + tuple([1] * (len(input_shape) - 2))
         init_gamma = torch.tensor(self.scale * np.ones(shape, dtype=np.float32))
         self.register_parameter(self.name, torch.nn.Parameter(init_gamma))
 
@@ -65,8 +65,8 @@ class PriorBox(torch.nn.Module):
                  flip=True, variances=None, **kwargs):
         super(PriorBox, self).__init__(**kwargs)
 
-        self.waxis = 2
-        self.haxis = 1
+        self.waxis = 3
+        self.haxis = 2
         self.img_size = img_size
         if min_size <= 0:
             raise Exception('min_size must be positive.')
@@ -142,6 +142,7 @@ class PriorBox(torch.nn.Module):
         #define xmin, ymin, xmax, ymax of prior boxes
 
         num_priors_ = len(self.aspect_ratios)
+
 
         prior_boxes = np.concatenate((centers_x, centers_y), axis=1)
         prior_boxes = np.tile(prior_boxes, (1, 2 * num_priors_))
