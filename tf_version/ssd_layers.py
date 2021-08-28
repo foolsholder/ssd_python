@@ -44,7 +44,7 @@ class Normalize(Layer):
 
     def call(self, x, mask=None):
         output = K.l2_normalize(x, self.axis)
-        output *= self.gamma
+        output = tensorflow.math.multiply(output, self.gamma)
         return output
 
 
