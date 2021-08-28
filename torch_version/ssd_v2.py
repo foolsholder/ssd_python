@@ -88,7 +88,7 @@ class SSD300v2(torch.nn.Module):
         self.conv4_3_norm = Normalize(20, name='conv4_3_norm', input_shape=(-1, 512, -1, -1))
         self.conv4_3_norm_mbox_loc = Conv2d(512, num_priors * 4, (3, 3), padding=(1, 1))
         self.conv4_3_norm_mbox_loc_flat = Flatten()
-        self.conv4_3_norm_mbox_conf = Conv2d(512, num_priors * num_classes, (3, 3), padding='same')
+        self.conv4_3_norm_mbox_conf = Conv2d(512, num_priors * num_classes, (3, 3), padding=(1, 1))
         self.conv4_3_norm_mbox_conf_flat = Flatten()
 
         self.conv4_3_norm_mbox_priorbox = PriorBox(img_size, 30.0,
