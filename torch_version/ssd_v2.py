@@ -72,7 +72,7 @@ class SSD300v2(torch.nn.Module):
         # Block 7
         self.conv7_1 = Conv2d(512, 128, (1, 1), padding=(0, 0))
         self.conv7_1z = ZeroPad2d(padding=(1, 1, 1, 1))
-        self.conv7_2 = Conv2d(128, 256, (3, 3), padding='valid', stride=(2, 2))
+        self.conv7_2 = Conv2d(128, 256, (3, 3), stride=(2, 2))
 
         # Block 8
         self.conv8_1 = Conv2d(256, 128, (1, 1), padding=(0, 0))
