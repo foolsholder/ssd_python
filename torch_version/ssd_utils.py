@@ -1,7 +1,7 @@
 import numpy as np
 import torchvision
 
-class BoxUtility(object):
+class BBoxUtility(object):
     """Utility class to do some stuff with bounding boxes and priors.
 
     # Arguments
