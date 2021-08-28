@@ -46,7 +46,7 @@ class SSDv2(torch.nn.Module):
         self.conv4_1 = Conv2d(256, 512, (3, 3), padding=(1, 1))
         self.conv4_2 = Conv2d(512, 512, (3, 3), padding=(1, 1))
         self.conv4_3 = Conv2d(512, 512, (3, 3), padding=(1, 1))
-        self.pool4 = MaxPool2d(kernel_size=(2, 2), stride=(2, 2), padding=(1, 1))
+        self.pool4 = MaxPool2d(kernel_size=(2, 2), stride=(2, 2))
 
         # Block 5
         self.conv5_1 = Conv2d(512, 512, (3, 3), padding=(1, 1))
@@ -62,7 +62,7 @@ class SSDv2(torch.nn.Module):
 
         # Block 6
         self.conv6_1 = Conv2d(1024, 256, (1, 1), padding=(0, 0))
-        self.conv6_2 = Conv2d(256, 512, (3, 3), stride=(2, 2), padding=(1, 1))
+        self.conv6_2 = Conv2d(256, 512, (3, 3), stride=(2, 2))
 
         # Block 7
         self.conv7_1 = Conv2d(512, 128, (1, 1), padding=(0, 0))
@@ -96,17 +96,27 @@ class SSDv2(torch.nn.Module):
         conv4_1 = conv_activation(pool3, self.conv4_1, F.relu)
         conv4_2 = conv_activation(conv4_1, self.conv4_2, F.relu)
         conv4_3 = conv_activation(conv4_2, self.conv4_3, F.relu)
-        pool4 = self.pool3(conv4_3)
+        pool4 = self.pool4(conv4_3)
 
         conv5_1 = conv_activation(pool4, self.conv5_1, F.relu)
         conv5_2 = conv_activation(conv5_1, self.conv5_2, F.relu)
         conv5_3 = conv_activation(conv5_2, self.conv5_3, F.relu)
-        pool5 = self.pool3(conv5_3)
+        pool5 = self.pool5(conv5_3)
 
         fc6 = conv_activation(pool5, self.fc6, F.relu)
         fc7 = conv_activation(fc6, self.fc7, F.relu)
 
-        pool6 = self.pool6(fc7).view(input_object.size(0), -1)
+        conv6_1 = conv_activation(fc7, self.conv6_1, F.relu)
+        conv6_2 = conv_activation(conv6_1, self.conv6_2, F.relu)
+
+        conv7_1 = conv_activation(conv6_2, self.conv7_1, F.relu)
+        conv7_1z = self.conv7_1z(conv7_1) # zero padding
+        conv7_2 = conv_activation(conv7_1z, self.conv7_2, F.relu)
+
+        conv8_1 = conv_activation(conv7_2, self.conv8_1, F.relu)
+        conv8_2 = conv_activation(conv8_1, self.conv8_2, F.relu)
+
+        pool6 = self.pool6(conv8_2).view(input_object.size(0), -1)
         return pool6
 
 if __name__ == '__main__':
