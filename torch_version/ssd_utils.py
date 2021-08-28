@@ -23,7 +23,7 @@ class BBoxUtility(object):
         self.num_priors = 0 if priors is None else len(priors)
         self.overlap_threshold = overlap_threshold
         self._nms_thresh = nms_tresh
-        self._tok_k = top_k
+        self._top_k = top_k
 
     @property
     def nms_thresh(self):
@@ -215,7 +215,7 @@ class BBoxUtility(object):
                     confs_to_process = torch.tensor(c_confs[c_confs_m])
                     idx = torchvision.ops.nms(boxes_to_process, confs_to_process,
                                                     iou_threshold=self._nms_thresh)
-                    idx = np.array(idx)[:self.top_k]
+                    idx = np.array(idx)[:self._top_k]
 
                     good_boxes = boxes_to_process[idx]
                     confs = confs_to_process[idx][:, None]
