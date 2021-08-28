@@ -14,8 +14,8 @@ from tensorflow.keras.layers import ZeroPadding2D
 from tensorflow.keras.layers import concatenate
 from tensorflow.keras.models import Model
 
-from ssd_layers import Normalize
-from ssd_layers import PriorBox
+from .ssd_layers import Normalize
+from .ssd_layers import PriorBox
 
 
 def SSD300v2(input_shape, num_classes=21):
