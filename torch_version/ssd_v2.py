@@ -6,9 +6,9 @@ from torch.nn import (
     Conv2d,
     Linear,
     Flatten,
+    MaxPool2d,
     AdaptiveAvgPool2d,
     ZeroPad2d,
-    MaxPool2d
 )
 
 from .ssd_layers import Normalize, PriorBox
@@ -44,7 +44,8 @@ class SSD300v2(torch.nn.Module):
         self.conv3_1 = Conv2d(128, 256, (3, 3), padding=(1, 1))
         self.conv3_2 = Conv2d(256, 256, (3, 3), padding=(1, 1))
         self.conv3_3 = Conv2d(256, 256, (3, 3), padding=(1, 1))
-        self.pool3 = MaxPool2d(kernel_size=(2, 2), stride=(2, 2), padding=(1, 1))
+        self.conv3_3z = ZeroPad2d(padding=(0, 1, 0, 1))
+        self.pool3 = MaxPool2d(kernel_size=(2, 2), stride=(2, 2))
 
         # Block 4
         self.conv4_1 = Conv2d(256, 512, (3, 3), padding=(1, 1))
@@ -78,7 +79,7 @@ class SSD300v2(torch.nn.Module):
         self.conv8_1 = Conv2d(256, 128, (1, 1), padding=(0, 0))
         self.conv8_2 = Conv2d(128, 256, (3, 3), padding=(1, 1), stride=(2, 2))
 
-        self.pool6 = AdaptiveAvgPool2d((1, 1))
+        #self.pool6 = AdaptiveAvgPool2d((1, 1))
 
         img_size = (input_shape[1], input_shape[0])
 
@@ -109,7 +110,7 @@ class SSD300v2(torch.nn.Module):
                                      aspect_ratios=[2, 3],
                                      variances=[0.1, 0.1, 0.2, 0.2])
 
-        # predictions from conv6_3
+        # predictions from conv6_2
 
         num_priors = 6
         self.conv6_2_mbox_conf = Conv2d(512, num_priors * num_classes, (3, 3), padding=(1, 1))
@@ -175,7 +176,8 @@ class SSD300v2(torch.nn.Module):
         conv3_1 = conv_activation(pool2, self.conv3_1, F.relu)
         conv3_2 = conv_activation(conv3_1, self.conv3_2, F.relu)
         conv3_3 = conv_activation(conv3_2, self.conv3_3, F.relu)
-        pool3 = self.pool3(conv3_3)
+        conv3_3z = self.conv3_3z(conv3_3)
+        pool3 = self.pool3(conv3_3z)
 
         conv4_1 = conv_activation(pool3, self.conv4_1, F.relu)
         conv4_2 = conv_activation(conv4_1, self.conv4_2, F.relu)
@@ -201,14 +203,16 @@ class SSD300v2(torch.nn.Module):
         conv8_1 = conv_activation(conv7_2, self.conv8_1, F.relu)
         conv8_2 = conv_activation(conv8_1, self.conv8_2, F.relu)
 
-        pool6 = self.pool6(conv8_2)
+        pool6 = conv8_2.mean(dim=(-2, -1))
 
         # predictions from conv4_3
 
         conv4_3_norm = self.conv4_3_norm(conv4_3)
         conv4_3_norm_mbox_loc = self.conv4_3_norm_mbox_loc(conv4_3_norm)
+        conv4_3_norm_mbox_loc = conv4_3_norm_mbox_loc.permute(0, 2, 3, 1)
         conv4_3_norm_mbox_loc_flat = self.conv4_3_norm_mbox_loc_flat(conv4_3_norm_mbox_loc)
         conv4_3_norm_mbox_conf = self.conv4_3_norm_mbox_conf(conv4_3_norm)
+        conv4_3_norm_mbox_conf = conv4_3_norm_mbox_conf.permute(0, 2, 3, 1)
         conv4_3_norm_mbox_conf_flat = self.conv4_3_norm_mbox_conf_flat(conv4_3_norm_mbox_conf)
         conv4_3_norm_mbox_priorbox = self.conv4_3_norm_mbox_priorbox(conv4_3_norm)
 
@@ -248,7 +252,7 @@ class SSD300v2(torch.nn.Module):
 
         pool6_mbox_loc_flat = self.pool6_mbox_loc_flat(pool6.view(input_object.size(0), -1))
         pool6_mbox_conf_flat = self.pool6_mbox_conf_flat(pool6.view(input_object.size(0), -1))
-        pool6_mbox_priorbox = self.pool6_mbox_priorbox(pool6)
+        pool6_mbox_priorbox = self.pool6_mbox_priorbox(pool6.view(input_object.size(0), -1, 1, 1))
 
         # gather all predictions
 
@@ -292,7 +296,7 @@ class SSD300v2(torch.nn.Module):
         mbox_loc = mbox_loc.reshape((input_shape[0], num_boxes, 4))
         mbox_conf = mbox_conf.reshape((input_shape[0], num_boxes, self.num_classes))
         mbox_conf = F.softmax(mbox_conf, dim=-1)
-        
+
         predictions = torch.cat(
             [
                 mbox_loc,
@@ -301,7 +305,7 @@ class SSD300v2(torch.nn.Module):
             ],
             dim=2
         )
-
+        return conv4_3_norm_mbox_loc_flat
         return predictions
 
 if __name__ == '__main__':
