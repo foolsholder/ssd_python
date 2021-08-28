@@ -1,6 +1,7 @@
 import torch
 import numpy as np
 
+
 class Normalize(torch.nn.Module):
     """Normalization layer as described in ParseNet paper.
 
@@ -27,7 +28,7 @@ class Normalize(torch.nn.Module):
         init_gamma = torch.tensor(self.scale * np.ones(shape, dtype=np.float32))
         self.register_parameter(self.name, torch.nn.Parameter(init_gamma))
 
-    def call(self, x, mask=None):
+    def forward(self, x):
         output = x / torch.norm(x, dim=1, keepdim=True)
 
         gamma = getattr(self, self.name)

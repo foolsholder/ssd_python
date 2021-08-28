@@ -11,7 +11,8 @@ from torch.nn import (
     MaxPool2d
 )
 
-class SSDv2(torch.nn.Module):
+
+class SSD300v2(torch.nn.Module):
     """SSD300 architecture.
 
     # Arguments
