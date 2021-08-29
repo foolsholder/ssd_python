@@ -313,7 +313,6 @@ class SSD300v2(torch.nn.Module):
             ],
             dim=2
         )
-        return conv4_3_norm_mbox_loc_flat
         return predictions
 
 if __name__ == '__main__':
